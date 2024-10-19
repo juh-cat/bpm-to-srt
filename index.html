@@ -1,115 +1,25 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SRT Generator</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            max-width: 600px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-        label, input, button {
-            display: block;
-            margin-bottom: 10px;
-        }
-        input {
-            width: 100%;
-            padding: 5px;
-        }
-        button {
-            background-color: #4CAF50;
-            color: white;
-            padding: 10px;
-            border: none;
-            cursor: pointer;
-        }
-        button:hover {
-            background-color: #45a049;
-        }
-        #output {
-            white-space: pre-wrap;
-            background-color: #f1f1f1;
-            padding: 10px;
-            margin-top: 20px;
-        }
-        #downloadBtn {
-            display: none;
-            margin-top: 10px;
-        }
-    </style>
+    <link rel="stylesheet" href="styles/bpmtosrt.css">
 </head>
 <body>
-    <h1>SRT Generator</h1>
-    <label for="bpm">Enter the song's BPM:</label>
-    <input type="number" id="bpm" step="0.1" required>
-    <label for="duration">Enter the song's duration in seconds:</label>
-    <input type="number" id="duration" step="0.1" required>
-    <label for="filename">Enter the output SRT file name:</label>
-    <input type="text" id="filename" value="output.srt" required>
-    <button onclick="generateSRT()">Generate SRT</button>
-    <button id="downloadBtn" onclick="downloadSRT()">Download SRT File</button>
-    <div id="output"></div>
-
-    <script>
-        let generatedSRTContent = '';
-
-        function formatTime(totalSeconds) {
-            const hours = Math.floor(totalSeconds / 3600);
-            const minutes = Math.floor((totalSeconds % 3600) / 60);
-            const seconds = Math.floor(totalSeconds % 60);
-            const milliseconds = Math.floor((totalSeconds % 1) * 1000);
-            return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')},${String(milliseconds).padStart(3, '0')}`;
-        }
-
-        function generateSRT() {
-            const bpm = parseFloat(document.getElementById('bpm').value);
-            const duration = parseFloat(document.getElementById('duration').value);
-
-            if (isNaN(bpm) || isNaN(duration) || bpm <= 0 || duration <= 0) {
-                alert("Please enter valid numbers for BPM and duration.");
-                return;
-            }
-
-            const beatDuration = 60 / bpm;
-            const totalBeats = Math.floor(duration / beatDuration);
-
-            let srtContent = '';
-
-            for (let beat = 1; beat <= totalBeats; beat++) {
-                const startTime = (beat - 1) * beatDuration;
-                const endTime = beat * beatDuration;
-
-                const startStr = formatTime(startTime);
-                const endStr = formatTime(endTime);
-
-                srtContent += `${beat}\n`;
-                srtContent += `${startStr} --> ${endStr}\n`;
-                srtContent += `beat ${beat}\n`;
-                srtContent += `${beat % 4 || 4}/4\n`;
-                srtContent += `${beat % 8 || 8}/8\n`;
-                srtContent += `${beat % 16 || 16}/16\n\n`;
-            }
-
-            generatedSRTContent = srtContent;
-            document.getElementById('output').textContent = srtContent;
-            document.getElementById('downloadBtn').style.display = 'block';
-        }
-
-        function downloadSRT() {
-            const filename = document.getElementById('filename').value || 'output.srt';
-            const blob = new Blob([generatedSRTContent], { type: 'text/plain' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = filename;
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
-        }
-    </script>
+    <button id="theme-toggle" class="theme-toggle">D</button>
+    <div class="container">
+        <h1>SRT Generator</h1>
+        <label for="bpm">Enter the song's BPM:</label>
+        <input type="number" id="bpm" step="0.1" required>
+        <label for="duration">Enter the song's duration in seconds:</label>
+        <input type="number" id="duration" step="0.1" required>
+        <label for="filename">Enter the output SRT file name:</label>
+        <input type="text" id="filename" value="output.srt" required>
+        <button onclick="generateSRT()">Generate SRT</button>
+        <button id="downloadBtn" onclick="downloadSRT()">Download SRT File</button>
+        <div id="output"></div>
+    </div>
+    <script src="scripts/bpmtosrt.js"></script>
 </body>
 </html>
